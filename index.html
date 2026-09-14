@@ -26,13 +26,6 @@
   }
 
   .wrap{ max-width:1280px; margin:0 auto; }
-  .intro{ max-width:760px; margin:0 auto 22px; text-align:left; }
-  .intro .k{ font-size:11px; text-transform:uppercase; letter-spacing:.09em; color:var(--page-accent); font-weight:700; margin-bottom:8px; }
-  .intro h1{ font-size:22px; margin:0 0 8px; letter-spacing:-.01em; }
-  .intro p{ font-size:13.5px; color:var(--page-mute); margin:0; line-height:1.55; }
-  .intro .tag{ display:inline-block; margin-top:10px; font-size:11px; font-weight:700; letter-spacing:.03em; color:#8A5A22; background:#F3E1CE; padding:3px 10px; border-radius:20px; }
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .intro .tag{ color:#F0C594; background:#3A2C1D; } }
-  :root[data-theme="dark"] .intro .tag{ color:#F0C594; background:#3A2C1D; }
 
   /* ---- scaled 1280x720 frame ---- */
   .stage{ width:100%; max-width:1280px; margin:0 auto; }
@@ -55,12 +48,12 @@
   .hd .mark svg{ width:16px; height:16px; }
   .hd .titles h2{ margin:0; font-size:15.5px; font-weight:700; letter-spacing:-.005em; color:#0F332F; line-height:1.15; }
   .hd .titles .sub{ font-size:10.5px; color:#5C7570; margin-top:1px; }
-  .hd .nav-alt{
+  .hd .nav-alt, .page-switch .nav-alt{
     font-size:11px; font-weight:600; color:#146B63; background:#fff; border:1px solid #C6D8D4;
     padding:7px 12px; border-radius:7px; cursor:pointer; display:flex; align-items:center; gap:6px;
   }
-  .hd .nav-alt:hover{ background:#EAF3F1; }
-  .hd .nav-alt:focus-visible{ outline:2px solid #146B63; outline-offset:2px; }
+  .hd .nav-alt:hover, .page-switch .nav-alt:hover{ background:#EAF3F1; }
+  .hd .nav-alt:focus-visible, .page-switch .nav-alt:focus-visible{ outline:2px solid #146B63; outline-offset:2px; }
 
   /* ===== filtros ===== */
   .filters{ display:flex; align-items:center; gap:10px; }
@@ -141,11 +134,9 @@
   .chip .cn{ font-size:10px; font-weight:600; color:#2C4642; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .chip .cv{ font-size:10.5px; font-weight:700; color:#146B63; font-variant-numeric:tabular-nums; flex-shrink:0; }
 
-  /* legend chip strip for categories (small, in filters row optional) */
-  .footer-note{ text-align:center; font-size:11px; color:var(--page-mute); margin-top:14px; }
-
-  /* ===== selector de pagina ===== */
-  .page-switch{ display:flex; gap:8px; max-width:1280px; margin:0 auto 14px; }
+  /* ===== selector de pagina: superpuesto dentro del recuadro del dashboard, esquina sup. derecha ===== */
+  #pageSwitch{ position:absolute; top:0; left:0; width:1280px; height:720px; transform-origin:top left; pointer-events:none; z-index:5; }
+  .page-switch{ position:absolute; top:18px; right:16px; display:flex; gap:8px; pointer-events:auto; }
   .page-switch .nav-alt.active{ background:#146B63; color:#fff; border-color:#146B63; }
   .page-switch .nav-alt.active:hover{ background:#0F544D; }
 
@@ -182,19 +173,6 @@
 </style>
 
 <div class="wrap">
-  <div class="intro">
-    <div class="k">Aplicación funcional · datos reales del Anuario</div>
-    <h1>Anuario Estadístico de Salud — prototipo de página principal</h1>
-    <p>Representa, a escala 1280×720 (el canvas real de <code>DASHBOARD.pbix</code>), la Alternativa A aprobada en la auditoría UX/UI. Los filtros son funcionales — cambian el panel, el gráfico, el mapa y la tabla usando los datos reales del Anuario. El PBIX real no fue tocado.</p>
-    <span class="tag">Datos reales · prototipo independiente del PBIX</span>
-  </div>
-
-  <div class="page-switch">
-    <button class="nav-alt active" id="btnPageDash">Dashboard general</button>
-    <button class="nav-alt" id="btnPageVac">Coberturas de vacunación →</button>
-    <button class="nav-alt" id="btnPageEgr">Egresos hospitalarios →</button>
-  </div>
-
   <div class="stage">
     <div class="scaler" id="scaler">
       <div class="frame" id="frame">
@@ -479,10 +457,16 @@
         </div>
 
       </div>
+
+      <div id="pageSwitch">
+        <div class="page-switch">
+          <button class="nav-alt active" id="btnPageDash">Dashboard general</button>
+          <button class="nav-alt" id="btnPageVac">Coberturas de vacunación →</button>
+          <button class="nav-alt" id="btnPageEgr">Egresos hospitalarios →</button>
+        </div>
+      </div>
     </div>
   </div>
-
-  <p class="footer-note">Prototipo independiente para revisión de diseño · el modelo de datos, las medidas DAX y el archivo <code>DASHBOARD.pbix</code> no fueron modificados.</p>
 </div>
 
 <script>
@@ -490,7 +474,7 @@
   function fit(){
     var scaler = document.getElementById('scaler');
     var s = scaler.clientWidth / 1280;
-    ['frame','frame2','frame3'].forEach(function(id){
+    ['frame','frame2','frame3','pageSwitch'].forEach(function(id){
       var f = document.getElementById(id);
       if(f) f.style.transform = 'scale(' + s + ')';
     });
